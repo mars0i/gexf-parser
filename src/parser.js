@@ -73,6 +73,8 @@
       // Iterating
       for (var i = 0; i < nodeMap.length; i++) {
         attributes[nodeMap[i].name] = nodeMap[i].value;
+        attributes[nodeMap[i].start] = nodeMap[i].start;
+        attributes[nodeMap[i].endopen] = nodeMap[i].endopen;
       }
 
       return attributes;
@@ -213,7 +215,7 @@
     // Information
     _xml.hasViz = !!_helpers.getAttributeNS(_xml.els.root, 'xmlns', 'viz');
     _xml.version = _xml.els.root.getAttribute('version') || '1.0';
-    _xml.mode = _xml.els.graph.getAttribute('mode') || 'static';
+    _xml.mode = _xml.els.graph.getAttribute('mode') || 'static';  // MARSHALL's comment: Note this allows a dynamic graph, at least at this level.
 
     var edgeType = _xml.els.graph.getAttribute('defaultedgetype');
     _xml.defaultEdgetype = edgeType || 'undirected';
@@ -270,17 +272,27 @@
     // Data from nodes or edges
     function _data(model, node_or_edge) {
 
-      var data = {};
-      var attvalues_els = node_or_edge.getElementsByTagName('attvalue');
+	    var data = {};
+	    var attvalues_els = node_or_edge.getElementsByTagName('attvalue');
 
-      // Getting Node Indicated Attributes
-      var ah = _helpers.nodeListToHash(attvalues_els, function(el) {
-        var attributes = _helpers.namedNodeMapToObject(el.attributes);
-        var key = attributes.id || attributes['for'];
+	    // Getting Node Indicated Attributes
+	    var ah = _helpers.nodeListToHash(attvalues_els, function(el) {
+		    var attributes = _helpers.namedNodeMapToObject(el.attributes);
+		    var key = attributes.id || attributes['for'];
 
-        // Returning object
-        return {key: key, value: attributes.value};
-      });
+		    // Modified by Marshall Abrams:
+		    if (_xml.mode == "static") {
+			    // Returning object
+			    return {key: key, value: attributes.value};
+		    } else {
+			    // Can I throw an exception or something if I have both x and xopen?
+			    var start = attributes['start'] || attributes['startopen'] || -Infinity; // treat open and closed same here
+			    var end = attributes['end'] || attributes['endopen'] || Infinity;
+			    var leftopen = attributes['startopen'] ? true : false; // but indicate open/closed here
+			    var rightopen = attributes['endopen'] ? true : false;
+			    return {key: key, value: attributes.value, start: start, end: end, leftopen: leftopen, rightopen: rightopen};
+		    }
+	    });
 
 
       // Iterating through model
