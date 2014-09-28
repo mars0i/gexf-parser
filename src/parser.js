@@ -290,13 +290,9 @@
 			    var end = attributes['end'] || attributes['endopen'] || Infinity;
 			    var leftopen = attributes['startopen'] ? true : false; // but indicate open/closed here
 			    var rightopen = attributes['endopen'] ? true : false;
-			    //return {key: key, value: attributes.value, start: start, end: end, leftopen: leftopen, rightopen: rightopen};
-			    return {start: start, leftopen: leftopen, 
-				    {end: end, rightopen: rightopen, 
-					    {key: key, value: attributes.value}}};
+			    return {key: key, value: attributes.value, {start: start, end: end, leftopen: leftopen, rightopen: rightopen}};
 		    }
 	    });
-
 
       // Iterating through model
       model.map(function(a) {
