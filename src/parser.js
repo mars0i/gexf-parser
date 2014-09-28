@@ -285,12 +285,9 @@
 			    // Returning object
 			    return {key: key, value: attributes.value};
 		    } else {
-			    // Can I throw an exception or something if I have both x and xopen?
-			    var start = attributes['start'] || attributes['startopen'] || -Infinity; // treat open and closed same here
-			    var end = attributes['end'] || attributes['endopen'] || Infinity;
-			    var leftopen = attributes['startopen'] ? true : false; // but indicate open/closed here
-			    var rightopen = attributes['endopen'] ? true : false;
-			    return {key: key, value: attributes.value, {start: start, end: end, leftopen: leftopen, rightopen: rightopen}};
+			    // Assume the very simplest case: discrete intervals of length 1
+			    var start = attributes['start'];
+			    return {key: key, value: attributes.value start: start};
 		    }
 	    });
 
